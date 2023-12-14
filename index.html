@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Binary Search Example</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Binary Search Example</h1>
+
+    <script>
+      function binarySearch(sortedArray, key) {
+        let start = 0;
+        let end = sortedArray.length - 1;
+        let steps = [];
+
+        while (start <= end) {
+          let middle = Math.floor((start + end) / 2);
+          steps.push({
+            start,
+            end,
+            middle,
+            array: sortedArray.slice(start, end + 1),
+          });
+
+          if (sortedArray[middle] === key) {
+            steps.push({
+              start,
+              end,
+              middle,
+              array: sortedArray.slice(middle, middle + 1),
+            });
+            // found the key
+            return { index: middle, steps };
+          } else if (sortedArray[middle] < key) {
+            // continue searching to the right
+            start = middle + 1;
+          } else {
+            // search searching to the left
+            end = middle - 1;
+          }
+        }
+        // key wasn't found
+        return { index: -1, steps };
+      }
+
+      // Example usage
+      let sortedArray = [];
+
+      // 1 000 000 elements in array
+      // const size = 1000000;
+      //   for (let i = 1; i <= size; i++) {
+      //     sortedArray.push(i);
+      //   }
+
+      const size = 100;
+      sortedArray = Array.from({ length: size }, (_, index) => index + 1);
+      const keyToFind = 3;
+
+      const result = binarySearch(sortedArray, keyToFind);
+
+      if (result !== -1) {
+        console.log(`Key ${keyToFind} found at index ${result.index}`);
+      } else {
+        console.log(`Key ${keyToFind} not found in the array`);
+      }
+
+      console.log("Initial array:");
+      console.log(sortedArray);
+      console.log("Steps:");
+      result.steps.forEach((step, index) => {
+        console.log(`Step ${index + 1}:`, step);
+      });
+
+      const stepsTable = document.createElement("table");
+      stepsTable.innerHTML = `
+        <tr>
+          <th>Step</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Middle</th>
+          <th>Array</th>
+        </tr>
+      `;
+
+      result.steps.forEach((step, index) => {
+        const row = stepsTable.insertRow();
+        row.insertCell(0).textContent = index + 1;
+        row.insertCell(1).textContent = step.start;
+        row.insertCell(2).textContent = step.end;
+        row.insertCell(3).textContent = step.middle;
+        row.insertCell(4).textContent = step.array.join(", ");
+      });
+
+      document.body.appendChild(stepsTable);
+    </script>
+  </body>
+</html>
